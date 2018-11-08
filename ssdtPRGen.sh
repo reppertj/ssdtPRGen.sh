@@ -40,7 +40,7 @@ gGitHubContentURL="https://raw.githubusercontent.com/Piker-Alpha/ssdtPRGen.sh/${
 #
 # Change this to 1 if you want to use the Github project directory instead of ~/Library/ssdtPRGen
 #
-let gDeveloperMode=0
+let gDeveloperMode=1
 
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -127,7 +127,7 @@ let gID=$(id -u)
 #
 # Lowest possible idle frequency (user configurable). Also known as Low Frequency Mode.
 #
-let gBaseFrequency=1600
+let gBaseFrequency=800
 
 #
 # Custom ACPI processor label (initialised by _updateProcessorNames).
@@ -159,7 +159,7 @@ let gIsLegacyRevoBoot=0
 let gExtraStyling=1
 
 #
-# Global variable used by some functions to return a value to the callee. 
+# Global variable used by some functions to return a value to the callee.
 #
 let gFunctionReturn=0
 
@@ -555,7 +555,7 @@ function _printProcessorDefinitions()
 
     echo '    }'                                                                      >> "$gSsdtPR"
     #
-    # 
+    #
     #
     if [[ $scopeIndex -lt ${#gScope[@]} ]];
       then
@@ -3878,28 +3878,7 @@ function _checkLibraryDirectory()
   #
   # Are we running in the Github project directory?
   #
-  if [ $gDeveloperMode -eq 1 ] &&
-     [ -d .git ] &&
-     [ -f .gitIgnore ] &&
-     [ -f CHANGELOG.md ] &&
-     [ -f CONTRIBUTORS.md ] &&
-     [ -f README.md ] &&
-     [ -d Data ] &&
-     [ -f Data/Broadwell.cfg ] &&
-     [ -f Data/Haswell.cfg ] &&
-     [ -f "Data/Ivy bridge.cfg" ] &&
-     [ -f "Data/Kaby lake.cfg" ] &&
-     [ -f Data/Models.cfg ] &&
-     [ -f Data/Restrictions.cfg ] &&
-     [ -f "Data/Sandy Bridge.cfg" ] &&
-     [ -f Data/Skylake.cfg ] &&
-     [ -f Data/Versions.cfg ] &&
-     [ -d Tools ] &&
-     [ -f Tools/extractACPITables.zip ] &&
-     [ -f Tools/iasl.zip ] &&
-     [ -f Tools/Makefile ] &&
-     [ -f ssdtPRGen.sh ];
-    then
+  if [ $gDeveloperMode -eq 1 ]; then
       #
       # Yes. Update path info.
       #
@@ -4144,12 +4123,12 @@ function _getScriptArguments()
 
                   -cpus) shift
 
-                      if [[ "$1" =~ ^[1-4]+$ ]];
+                      if [[ "$1" =~ ^[1-6]+$ ]];
                         then
                           #
                           # Sanity checking.
                           #
-                          if [[ $1 -gt 0 && $1 -lt 5 ]];
+                          if [[ $1 -gt 0 && $1 -lt 7 ]];
                             then
                               let gPhysicalCPUs=$1
                               _PRINT_MSG "Override value: (-cpus) number of processors, now using: ${1}!"
@@ -4545,9 +4524,9 @@ function main()
   echo   '-----------------------------------------------------------'
   printf "${STYLE_BOLD}Bugs${STYLE_RESET} > https://github.com/Piker-Alpha/ssdtPRGen.sh/issues <\n"
 
+  _getScriptArguments "$@"
   _checkSourceFilename
   _checkLibraryDirectory
-  _getScriptArguments "$@"
   #
   # Fired up with -mode custom?
   #
